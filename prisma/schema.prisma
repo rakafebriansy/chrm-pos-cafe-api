@@ -49,8 +49,15 @@ model AppSetting {
 }
 
 model Supplier {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  phone     String?   @unique
+  address   String?
+  email     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  ingredients Ingredient[]
 
   @@map("suppliers")
 }
@@ -75,6 +82,8 @@ model Ingredient {
 
   ingredientCategoryId Int                @map("ingredient_category_id")
   ingredientCategory   IngredientCategory @relation(fields: [ingredientCategoryId], references: [id], onDelete: Restrict)
+  supplierId           Int?
+  supplier             Supplier?          @relation(fields: [supplierId], references: [id])
 
   stockLogs       StockLog[]
   menuIngredients MenuIngredient[]
@@ -199,13 +208,13 @@ model Order {
   customerId Int?      @map("customer_id")
   customer   Customer? @relation(fields: [customerId], references: [id])
 
-  items   OrderItem[]
-  payment Payment?
+  items     OrderItem[]
+  payment   Payment?
   stockLogs StockLog[]
 
-  paidAt    DateTime?  @map("paid_at")
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @updatedAt @map("updated_at")
+  paidAt    DateTime? @map("paid_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
 
   @@map("orders")
 }

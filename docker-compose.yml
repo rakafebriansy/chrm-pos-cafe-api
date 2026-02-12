@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: pos_db_container
+    restart: always
+    environment:
+      POSTGRES_USER: user_pos
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pos_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  backend:
+    build: . 
+    container_name: pos_backend_container
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://user_pos:password@db:5432/pos_db?schema=public"
+      # JWT_SECRET: "BELUM DI SET"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
